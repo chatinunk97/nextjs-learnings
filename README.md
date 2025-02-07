@@ -1,36 +1,83 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# Next.js Notes
 
-First, run the development server:
+## Routing
+Protects other file in the route folder user will be able to access the page.tsx only
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+## Client side navigation
+DON"T Use anchor
+`<a>` for navigation is not ideal
+It reloads everything in the page all again
+Therefore we use Link component that Next defines for us
+(you can check the behavior on the network tab)
+
+
+## Client vs Server
+We want to use as less client side component as we can
+So if you have a product page with components like 
+- navbar 
+- product list 
+- product card 
+- footer 
+
+We can put them ALL in the server
+except you can extract the product card's addtoCart button to be a client side component
+you see you don't have to move the whole product card to the client side just break it down to small pieces
+
+## Fetch data in server component!
+
+
+## Caching and fresh data
+ - Keep data fresh all the time
 ```
+  const res = await fetch(
+    "https://jsonplaceholder.typicode.com/users",
+    {cache: "no-store"}
+  ).then((data) => data);
+  ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Let Next cache your data
+```
+  const res = await fetch("https://jsonplaceholder.typicode.com/users", {
+    next: { revalidate: 10 },
+  }).then((data) => data);
+  ```
+this is only implemented in fetch so axios will not automatically have this
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Server side
+has 2 types
+- Static  (at build time)
+- Dynamic (at request time)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+If you did specify anything `( { } )` when fetching, Next js will treat it as a Static page
+which will be rendered only once when building
+but if you set `{cache: "no-store"}`  it will by dynamic
 
-## Learn More
+( see the behavior by having a time stamp show on UI while fetching in that component )
 
-To learn more about Next.js, take a look at the following resources:
+## CSS Module 
+CSS file scoped to a component
+ProductCard.module.css
+inside we can define css like normal
+```
+.cardContainer {
+   padding : 1 rem;
+   border: 1px solod #ccc
+}
+```
+THEN we can import the file as style
+import style from `./ProductCard.module.css`
+then we can use it just like a normal JS object
+```style.cardContainer```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This will make our class cleaner
+(
+the class name in the browser would be like   cardContainer_AIK98cmks 
+it adds a random string to make it unique because we can have multiple moudles that has the same class name
+)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Daisyui
+This makes tailwind much cleaner MUST USE !!
+https://daisyui.com/
