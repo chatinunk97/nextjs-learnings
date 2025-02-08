@@ -1,138 +1,178 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
 # Next.js Notes
 
-## Routing
-Protects other file in the route folder user will be able to access the page.tsx only
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+---
 
-## Client side navigation
-DON"T Use anchor
-`<a>` for navigation is not ideal
-It reloads everything in the page all again
-Therefore we use Link component that Next defines for us
-(you can check the behavior on the network tab)
+## 1. Routing
+### Protecting Routes
+- Only `page.tsx` should be accessible within a route folder.
 
+## 2. Navigation
+### Client-Side Navigation
+- **Avoid using `<a>` tags** for navigation because they cause full-page reloads.
+- Use Next.js `Link` component instead for optimized navigation.
+- You can observe the difference in the **Network** tab of DevTools.
 
-## Client vs Server
-We want to use as less client side component as we can
-So if you have a product page with components like 
-- navbar 
-- product list 
-- product card 
-- footer 
+---
 
-We can put them ALL in the server
-except you can extract the product card's addtoCart button to be a client side component
-you see you don't have to move the whole product card to the client side just break it down to small pieces
+## 3. Client vs Server Components
+- **Use server components as much as possible** to reduce JavaScript sent to the client.
+- Example: In a product page,
+  - Keep **navbar, product list, product card, and footer** as server components.
+  - Extract the **Add to Cart button** as a client component if it needs interactivity.
 
-## Fetch data in server component!
+---
 
+## 4. Fetching Data
+### Fetching Data in Server Components
+- Always **fetch data in server components** unless interactivity requires it on the client.
 
-## Caching and fresh data
- - Keep data fresh all the time
+### Caching and Fetch Strategies
+#### **Dynamic Data (Always Fresh)**
+```ts
+const res = await fetch("https://jsonplaceholder.typicode.com/users", {cache: "no-store"});
 ```
-  const res = await fetch(
-    "https://jsonplaceholder.typicode.com/users",
-    {cache: "no-store"}
-  ).then((data) => data);
-  ```
 
-- Let Next cache your data
-```
-  const res = await fetch("https://jsonplaceholder.typicode.com/users", {
-    next: { revalidate: 10 },
-  }).then((data) => data);
-  ```
-this is only implemented in fetch so axios will not automatically have this
-
-## Server side
-has 2 types
-- Static  (at build time)
-- Dynamic (at request time)
-
-If you did specify anything `( { } )` when fetching, Next js will treat it as a Static page
-which will be rendered only once when building
-but if you set `{cache: "no-store"}`  it will by dynamic
-
-( see the behavior by having a time stamp show on UI while fetching in that component )
-
-## CSS Module 
-CSS file scoped to a component
-ProductCard.module.css
-inside we can define css like normal
-```
-.cardContainer {
-   padding : 1 rem;
-   border: 1px solod #ccc
-}
-```
-THEN we can import the file as style
-import style from `./ProductCard.module.css`
-then we can use it just like a normal JS object
-```style.cardContainer```
-
-This will make our class cleaner
-(
-the class name in the browser would be like   cardContainer_AIK98cmks 
-it adds a random string to make it unique because we can have multiple moudles that has the same class name
-)
-
-## Daisyui
-This makes tailwind much cleaner MUST USE !!
-https://daisyui.com/
-
-
-## Setting up fonts
-```
-import localFont from "next/font/local";
-```
-Use next js localFont function so setup your local font.
-It's better for optimization because the font is loaded from local so you don't have to reach out to google
-
-- Setup your font files in side `app/fonts` 
-
-- Import `localFont` 
-
-- Create a variable to store the `NextFontWithVariable` returned from `localFont` 
-
-- Pass in arguments like this 
-```
-const workSans = localFont({
-  src: [
-
-    { path: "./fonts/WorkSans-Black.ttf", weight: "900", style: "normal" },
-    { path: "./fonts/WorkSans-Bold.ttf", weight: "800", style: "normal" },
-
-    ... // and so on
-  ],
-  //This variable will decide which CLASS will set this font up
-  variable: "--font-work-sans",
+#### **Revalidated Data (Cached with Expiration)**
+```ts
+const res = await fetch("https://jsonplaceholder.typicode.com/users", {
+  next: { revalidate: 10 },
 });
-
 ```
+- **Axios does not support this caching automatically**, so prefer `fetch` for built-in optimizations.
 
-- Now you can use it like a normal class. If you apply this to the loot layout (which is created when you setup Next js) it will effect all of the element inside your website
+### Static vs Dynamic Rendering
+- **Static Rendering** (default) → Data is fetched at build time.
+- **Dynamic Rendering** (explicitly set)
+  ```ts
+  {cache: "no-store"} // Forces data to be fetched on each request.
+  ```
+- **Test this behavior** by displaying a timestamp in the UI while fetching data.
 
-```
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en">
-      <body className={`${workSans.variable} antialiased`}>
-        {children}
-      </body>
-    </html>
+---
+
+## 5. Styling in Next.js
+
+### CSS Modules
+- Styles are **scoped** to components.
+- Example:
+  ```css
+  /* ProductCard.module.css */
+  .cardContainer {
+    padding: 1rem;
+    border: 1px solid #ccc;
+  }
+  ```
+- Import and use:
+  ```ts
+  import style from "./ProductCard.module.css";
+  <div className={style.cardContainer}></div>
+  ```
+- Next.js **automatically generates unique class names** to prevent conflicts.
+
+### Tailwind CSS & DaisyUI
+- **DaisyUI** extends Tailwind to make styling **cleaner and easier**. [Learn more](https://daisyui.com/)
+
+### Tailwind Utility Classes
+- Define reusable classes in `global.css`:
+  ```css
+  .heading {
+    @apply uppercase bg-black px-6 py-3 font-extrabold text-white text-2xl text-center;
+  }
+  ```
+- Use in components:
+  ```ts
+  <h1 className="heading">HOMEPAGE</h1>
+  ```
+
+---
+
+## 6. Fonts
+
+### Using Local Fonts for Optimization
+- **Use `next/font/local` instead of Google Fonts** for better performance.
+- Steps:
+  1. Place font files inside `/app/fonts`.
+  2. Import `localFont`:
+     ```ts
+     import localFont from "next/font/local";
+     ```
+  3. Define fonts:
+     ```ts
+     const workSans = localFont({
+       src: [
+         { path: "./fonts/WorkSans-Black.ttf", weight: "900", style: "normal" },
+         { path: "./fonts/WorkSans-Bold.ttf", weight: "800", style: "normal" },
+       ],
+       variable: "--font-work-sans",
+     });
+     ```
+  4. Apply globally via `layout.tsx`:
+     ```ts
+     <body className={`${workSans.variable} antialiased`}>
+     ```
+
+---
+
+## 7. Favicons
+- Place `favicon.ico` inside `/app/` → Next.js will **automatically use it** as the website icon.
+
+---
+
+## 8. CSS Tricks
+
+### Creating Background Patterns
+```css
+.pattern {
+  background-image: linear-gradient(
+    to right,
+    transparent 49.5%,
+    rgba(251, 232, 67, 0.2) 49.5%,
+    rgba(251, 232, 67, 0.6) 50.5%,
+    transparent 50.5%
   );
+  background-size: 5% 100%;
+  background-position: center;
+  background-repeat: repeat-x;
 }
-
 ```
 
-Notes about this layout.tsx it is where you define you basic configuration of the website like metadata, title , descriptions etc
+---
 
+## 9. Next.js Syntax & Concepts
 
-## Favicon
-Having `favicon.ico` inside your `/app` directory, next js will automatically use it as the icon of the website
+### `searchParams` is a Promise
+- **In Next.js 15, `searchParams` is asynchronous**, unlike previous versions.
+- Example:
+  ```ts
+  export default async function Page({
+    searchParams,
+  }: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  }) {
+    const filters = (await searchParams).filters;
+  }
+  ```
+- **Prior to v15, `searchParams` was synchronous** but will be deprecated in future versions.
+
+---
+
+## Summary
+| Feature                 | Key Points |
+|-------------------------|------------|
+| Routing                | Protect route files; use `page.tsx` only |
+| Navigation             | Use `Link` instead of `<a>` |
+| Client vs Server       | Keep most components on the server, extract interactivity |
+| Data Fetching          | Use server components, `fetch` for caching |
+| CSS Modules            | Scoped styles for components |
+| Tailwind & DaisyUI     | Cleaner Tailwind styling |
+| Fonts                  | Use `next/font/local` for optimization |
+| Favicons               | Place `favicon.ico` in `/app/` |
+| CSS Tricks             | Custom background patterns |
+| `searchParams`         | Now a **Promise** in Next.js 15 |
+
+---
+
+This structured format makes it easier to find and review key Next.js concepts. 🚀
+
