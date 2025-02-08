@@ -81,3 +81,58 @@ it adds a random string to make it unique because we can have multiple moudles t
 ## Daisyui
 This makes tailwind much cleaner MUST USE !!
 https://daisyui.com/
+
+
+## Setting up fonts
+```
+import localFont from "next/font/local";
+```
+Use next js localFont function so setup your local font.
+It's better for optimization because the font is loaded from local so you don't have to reach out to google
+
+- Setup your font files in side `app/fonts` 
+
+- Import `localFont` 
+
+- Create a variable to store the `NextFontWithVariable` returned from `localFont` 
+
+- Pass in arguments like this 
+```
+const workSans = localFont({
+  src: [
+
+    { path: "./fonts/WorkSans-Black.ttf", weight: "900", style: "normal" },
+    { path: "./fonts/WorkSans-Bold.ttf", weight: "800", style: "normal" },
+
+    ... // and so on
+  ],
+  //This variable will decide which CLASS will set this font up
+  variable: "--font-work-sans",
+});
+
+```
+
+- Now you can use it like a normal class. If you apply this to the loot layout (which is created when you setup Next js) it will effect all of the element inside your website
+
+```
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className={`${workSans.variable} antialiased`}>
+        {children}
+      </body>
+    </html>
+  );
+}
+
+```
+
+Notes about this layout.tsx it is where you define you basic configuration of the website like metadata, title , descriptions etc
+
+
+## Favicon
+Having `favicon.ico` inside your `/app` directory, next js will automatically use it as the icon of the website
