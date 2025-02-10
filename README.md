@@ -156,6 +156,8 @@ const res = await fetch("https://jsonplaceholder.typicode.com/users", {
   ```
 - **Prior to v15, `searchParams` was synchronous** but will be deprecated in future versions.
 
+## GROQ Query
+
 ---
 
 ## Summary
