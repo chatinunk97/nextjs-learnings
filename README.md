@@ -158,6 +158,56 @@ const res = await fetch("https://jsonplaceholder.typicode.com/users", {
 
 ## GROQ Query
 
+```
+*[_type =="startup" && defined(slug.current) ]{
+    _id,
+    title,
+    slug,
+    _createdAt,
+    author -> {
+      _id,name,image,bio
+    },
+    views,
+    description,
+    category,
+    image
+  
+}
+```
+
+
+## Generate type based on Sanity Structure
+
+[Check the Document here!](https://www.sanity.io/docs/sanity-typegen)
+
+### Extract type from schema
+`npx sanity@latest schema extract --path=./sanity/extract.json`
+
+### Create `sanity-typegeg.json`
+
+```
+{
+  "path": "./**/*.{ts,tsx,js,jsx}",
+  "schema": "./sanity/extract.json",
+  "generates": "./sanity.types.ts",
+  "overloadClientMethods": true
+}
+```
+### Generate the type
+
+` npx sanity@latest typegen generate`
+Be sure to check the previous step whether you are pointing to the right file path 
+
+You will find the type file named `sanity.types.ts` in the root folder 
+
+Tip You don't have to use all of the properties you can use Omit to exclude some of it out
+
+```
+export type StartupTypeCard = Omit<Startup, "author"> & { author?: Author };
+```
+
+
+
 ---
 
 ## Summary
