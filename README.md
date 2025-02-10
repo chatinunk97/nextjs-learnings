@@ -156,7 +156,7 @@ const res = await fetch("https://jsonplaceholder.typicode.com/users", {
   ```
 - **Prior to v15, `searchParams` was synchronous** but will be deprecated in future versions.
 
-## GROQ Query
+## 10. GROQ Query
 
 ```
 *[_type =="startup" && defined(slug.current) ]{
@@ -176,7 +176,7 @@ const res = await fetch("https://jsonplaceholder.typicode.com/users", {
 ```
 
 
-## Generate type based on Sanity Structure
+## 11. Generate type based on Sanity Structure
 
 [Check the Document here!](https://www.sanity.io/docs/sanity-typegen)
 
@@ -225,6 +225,4 @@ export type StartupTypeCard = Omit<Startup, "author"> & { author?: Author };
 | `searchParams`         | Now a **Promise** in Next.js 15 |
 
 ---
-
-This structured format makes it easier to find and review key Next.js concepts. 🚀
 
