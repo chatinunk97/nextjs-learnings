@@ -5,11 +5,15 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ---
 
 ## 1. Routing
+
 ### Protecting Routes
+
 - Only `page.tsx` should be accessible within a route folder.
 
 ## 2. Navigation
+
 ### Client-Side Navigation
+
 - **Avoid using `<a>` tags** for navigation because they cause full-page reloads.
 - Use Next.js `Link` component instead for optimized navigation.
 - You can observe the difference in the **Network** tab of DevTools.
@@ -17,6 +21,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ---
 
 ## 3. Client vs Server Components
+
 - **Use server components as much as possible** to reduce JavaScript sent to the client.
 - Example: In a product page,
   - Keep **navbar, product list, product card, and footer** as server components.
@@ -25,28 +30,39 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ---
 
 ## 4. Fetching Data
+
 ### Fetching Data in Server Components
+
 - Always **fetch data in server components** unless interactivity requires it on the client.
 
 ### Caching and Fetch Strategies
+
 #### **Dynamic Data (Always Fresh)**
+
 ```ts
-const res = await fetch("https://jsonplaceholder.typicode.com/users", {cache: "no-store"});
+const res = await fetch("https://jsonplaceholder.typicode.com/users", {
+  cache: "no-store",
+});
 ```
 
 #### **Revalidated Data (Cached with Expiration)**
+
 ```ts
 const res = await fetch("https://jsonplaceholder.typicode.com/users", {
   next: { revalidate: 10 },
 });
 ```
+
 - **Axios does not support this caching automatically**, so prefer `fetch` for built-in optimizations.
 
 ### Static vs Dynamic Rendering
+
 - **Static Rendering** (default) → Data is fetched at build time.
 - **Dynamic Rendering** (explicitly set)
   ```ts
-  {cache: "no-store"} // Forces data to be fetched on each request.
+  {
+    cache: "no-store";
+  } // Forces data to be fetched on each request.
   ```
 - **Test this behavior** by displaying a timestamp in the UI while fetching data.
 
@@ -55,6 +71,7 @@ const res = await fetch("https://jsonplaceholder.typicode.com/users", {
 ## 5. Styling in Next.js
 
 ### CSS Modules
+
 - Styles are **scoped** to components.
 - Example:
   ```css
@@ -72,9 +89,11 @@ const res = await fetch("https://jsonplaceholder.typicode.com/users", {
 - Next.js **automatically generates unique class names** to prevent conflicts.
 
 ### Tailwind CSS & DaisyUI
+
 - **DaisyUI** extends Tailwind to make styling **cleaner and easier**. [Learn more](https://daisyui.com/)
 
 ### Tailwind Utility Classes
+
 - Define reusable classes in `global.css`:
   ```css
   .heading {
@@ -91,6 +110,7 @@ const res = await fetch("https://jsonplaceholder.typicode.com/users", {
 ## 6. Fonts
 
 ### Using Local Fonts for Optimization
+
 - **Use `next/font/local` instead of Google Fonts** for better performance.
 - Steps:
   1. Place font files inside `/app/fonts`.
@@ -116,6 +136,7 @@ const res = await fetch("https://jsonplaceholder.typicode.com/users", {
 ---
 
 ## 7. Favicons
+
 - Place `favicon.ico` inside `/app/` → Next.js will **automatically use it** as the website icon.
 
 ---
@@ -123,6 +144,7 @@ const res = await fetch("https://jsonplaceholder.typicode.com/users", {
 ## 8. CSS Tricks
 
 ### Creating Background Patterns
+
 ```css
 .pattern {
   background-image: linear-gradient(
@@ -143,6 +165,7 @@ const res = await fetch("https://jsonplaceholder.typicode.com/users", {
 ## 9. Next.js Syntax & Concepts
 
 ### `searchParams` is a Promise
+
 - **In Next.js 15, `searchParams` is asynchronous**, unlike previous versions.
 - Example:
   ```ts
@@ -171,16 +194,16 @@ const res = await fetch("https://jsonplaceholder.typicode.com/users", {
     description,
     category,
     image
-  
+
 }
 ```
-
 
 ## 11. Generate type based on Sanity Structure
 
 [Check the Document here!](https://www.sanity.io/docs/sanity-typegen)
 
 ### Extract type from schema
+
 `npx sanity@latest schema extract --path=./sanity/extract.json`
 
 ### Create `sanity-typegeg.json`
@@ -193,12 +216,13 @@ const res = await fetch("https://jsonplaceholder.typicode.com/users", {
   "overloadClientMethods": true
 }
 ```
+
 ### Generate the type
 
 ` npx sanity@latest typegen generate`
-Be sure to check the previous step whether you are pointing to the right file path 
+Be sure to check the previous step whether you are pointing to the right file path
 
-You will find the type file named `sanity.types.ts` in the root folder 
+You will find the type file named `sanity.types.ts` in the root folder
 
 Tip You don't have to use all of the properties you can use Omit to exclude some of it out
 
@@ -206,23 +230,49 @@ Tip You don't have to use all of the properties you can use Omit to exclude some
 export type StartupTypeCard = Omit<Startup, "author"> & { author?: Author };
 ```
 
+## Live Content API
 
+[Check the doc](https://www.sanity.io/docs/live-content-guide)
+This allow your website to get the content immediately when the data is updated on Sanity
 
+### Setup the `live.ts` file
+
+## Use `sanityFetch()` instead of `client.fetch()`
+
+This function can be imported from the `live.ts` file and used just like the `client.fetch()`
+It returns the following
+
+```
+{
+    data: any;
+    sourceMap: ContentSourceMap | null;
+    tags: string[];
+}
+```
+
+So you may have to desconstruct it a little like this
+
+```
+ const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY });
+```
+### Add the `<SanityLive />` to your page
+From the [doc](https://www.sanity.io/docs/live-content-guide)
+>The final step to enable the Live Content API is adding the SanityLive React component. It listens for changes in your data and works with your sanityFetch queries to efficiently update content . Include it in application so it renders on any page that needs live content.
 ---
 
 ## Summary
-| Feature                 | Key Points |
-|-------------------------|------------|
-| Routing                | Protect route files; use `page.tsx` only |
-| Navigation             | Use `Link` instead of `<a>` |
-| Client vs Server       | Keep most components on the server, extract interactivity |
-| Data Fetching          | Use server components, `fetch` for caching |
-| CSS Modules            | Scoped styles for components |
-| Tailwind & DaisyUI     | Cleaner Tailwind styling |
-| Fonts                  | Use `next/font/local` for optimization |
-| Favicons               | Place `favicon.ico` in `/app/` |
-| CSS Tricks             | Custom background patterns |
-| `searchParams`         | Now a **Promise** in Next.js 15 |
+
+| Feature            | Key Points                                                |
+| ------------------ | --------------------------------------------------------- |
+| Routing            | Protect route files; use `page.tsx` only                  |
+| Navigation         | Use `Link` instead of `<a>`                               |
+| Client vs Server   | Keep most components on the server, extract interactivity |
+| Data Fetching      | Use server components, `fetch` for caching                |
+| CSS Modules        | Scoped styles for components                              |
+| Tailwind & DaisyUI | Cleaner Tailwind styling                                  |
+| Fonts              | Use `next/font/local` for optimization                    |
+| Favicons           | Place `favicon.ico` in `/app/`                            |
+| CSS Tricks         | Custom background patterns                                |
+| `searchParams`     | Now a **Promise** in Next.js 15                           |
 
 ---
-

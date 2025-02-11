@@ -3,6 +3,7 @@ import React from "react";
 import StartupCard, { StartupTypeCard } from "../../components/StartupCard";
 import { client } from "../../sanity/lib/client";
 import { STARTUPS_QUERY } from "../../sanity/lib/query";
+import { sanityFetch, SanityLive } from "../../sanity/lib/live";
 
 const page = async ({
   searchParams,
@@ -12,7 +13,8 @@ const page = async ({
   //In next js 15 searchParam is a promise
   const query = (await searchParams).query;
 
-  const posts = await client.fetch(STARTUPS_QUERY);
+  // const posts = await client.fetch(STARTUPS_QUERY);
+  const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY });
 
   console.log(JSON.stringify(posts, null, 2));
   // const posts = [
@@ -53,6 +55,7 @@ const page = async ({
           )}
         </ul>
       </section>
+      <SanityLive />
     </>
   );
 };
