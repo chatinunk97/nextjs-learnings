@@ -13,10 +13,13 @@ const page = async ({
   //In next js 15 searchParam is a promise
   const query = (await searchParams).query;
 
-  // const posts = await client.fetch(STARTUPS_QUERY);
-  const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY });
+  const params = { search: query || null };
 
-  console.log(JSON.stringify(posts, null, 2));
+  const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY , params});
+
+  // console.log(JSON.stringify(posts, null, 2));
+
+  // const posts = await client.fetch(STARTUPS_QUERY);
   // const posts = [
   //   {
   //     _createdAt: new Date().toISOString(),
