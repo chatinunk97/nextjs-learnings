@@ -17,21 +17,7 @@ const page = async ({
 
   const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY , params});
 
-  // console.log(JSON.stringify(posts, null, 2));
 
-  // const posts = await client.fetch(STARTUPS_QUERY);
-  // const posts = [
-  //   {
-  //     _createdAt: new Date().toISOString(),
-  //     view: 55,
-  //     author: { _id: 1, name: "John Doe" },
-  //     _id: 1,
-  //     description: "This is a description",
-  //     title: "This is a title",
-  //     image: "https://placehold.co/150",
-  //     category: "Robots",
-  //   },
-  // ];
   return (
     <>
       <section className="pink_container">

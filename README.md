@@ -260,6 +260,30 @@ From the [doc](https://www.sanity.io/docs/live-content-guide)
 >The final step to enable the Live Content API is adding the SanityLive React component. It listens for changes in your data and works with your sanityFetch queries to efficiently update content . Include it in application so it renders on any page that needs live content.
 ---
 
+### XSS Attack and dangerouslySetInnerHTML
+This is a type of code injection that injects malicoius scripts in to a website
+However, in this case we know what we are injecting in and it's from Sanity so we can be sure about it
+
+## Archieve Code
+Normal client fetching
+```
+  // console.log(JSON.stringify(posts, null, 2));
+
+  // const posts = await client.fetch(STARTUPS_QUERY);
+  // const posts = [
+  //   {
+  //     _createdAt: new Date().toISOString(),
+  //     view: 55,
+  //     author: { _id: 1, name: "John Doe" },
+  //     _id: 1,
+  //     description: "This is a description",
+  //     title: "This is a title",
+  //     image: "https://placehold.co/150",
+  //     category: "Robots",
+  //   },
+  // ];
+```
+
 ## Summary
 
 | Feature            | Key Points                                                |
